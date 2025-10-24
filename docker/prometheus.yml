@@ -1,0 +1,83 @@
+# Prometheus configuration file
+# Scrapes metrics from Cassandra, Redis, Kafka, and Spring Boot apps
+
+global:
+  scrape_interval: 15s          # How often to scrape targets by default
+  evaluation_interval: 15s      # How often to evaluate rules
+
+# Alerting rules can be configured here if needed
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets: ['alertmanager:9093']
+
+scrape_configs:
+
+  #################################################################
+  # Cassandra Metrics
+  # Requires Cassandra JMX exporter running on each node
+  #################################################################
+  - job_name: 'cassandra-in'
+    static_configs:
+      - targets: ['cassandra-in:9100']  # Replace 9100 with JMX exporter port if different
+
+  - job_name: 'cassandra-us'
+    static_configs:
+      - targets: ['cassandra-us:9100']
+
+  - job_name: 'cassandra-eu'
+    static_configs:
+      - targets: ['cassandra-eu:9100']
+
+  #################################################################
+  # Redis Metrics
+  # Requires Redis exporter running on each Redis instance
+  #################################################################
+  - job_name: 'redis-in'
+    static_configs:
+      - targets: ['redis-in:9121']  # Redis exporter port
+
+  - job_name: 'redis-us'
+    static_configs:
+      - targets: ['redis-us:9121']
+
+  - job_name: 'redis-eu'
+    static_configs:
+      - targets: ['redis-eu:9121']
+
+  #################################################################
+  # Kafka Metrics
+  # Requires Kafka JMX exporter running on Kafka broker
+  #################################################################
+  - job_name: 'kafka'
+    static_configs:
+      - targets: ['kafka:9308']  # JMX exporter port for Kafka
+
+  #################################################################
+  # Spring Boot Applications Metrics
+  # Assumes Spring Boot apps expose metrics via Actuator Prometheus endpoint
+  #################################################################
+  - job_name: 'spring-boot-in'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['spring-boot-in:8080']  # Adjust port per region
+
+  - job_name: 'spring-boot-us'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['spring-boot-us:8081']
+
+  - job_name: 'spring-boot-eu'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['spring-boot-eu:8082']
+
+#################################################################
+# Notes:
+# 1. Cassandra JMX exporter must be installed and configured for each node.
+# 2. Redis exporter must be running on each Redis instance for metrics collection.
+# 3. Kafka JMX exporter must be attached to Kafka broker for metrics.
+# 4. Spring Boot apps should have the 'spring-boot-starter-actuator' dependency
+#    with Prometheus endpoint enabled (management.endpoints.web.exposure.include=prometheus).
+# 5. Ports may need to be adjusted based on actual container ports or mapped host ports.
+#################################################################
