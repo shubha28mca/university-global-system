@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: university-app-in
+
+  # Cassandra configuration
+  data:
+    cassandra:
+      contact-points: cassandra-in
+      port: 9042
+      keyspace-name: university_keyspace
+      local-datacenter: IN_DC
+
+  # Redis configuration
+  redis:
+    host: redis-in
+    port: 6379
+
+  # Kafka configuration
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: university-group-in
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  metrics:
+    enable:
+      all: true
+  endpoint:
+    prometheus:
+      enabled: true
+
+server:
+  port: 8080
