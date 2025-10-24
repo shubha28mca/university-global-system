@@ -106,3 +106,33 @@ spring.data.cassandra.local-datacenter=<region_DC>
 
 Repository layer handles CRUD operations automatically.
 
+
+
+
+Notes & Suggestions:
+
+Circuit Breakers: Implemented using Resilience4j annotations. This prevents cascading failures if Cassandra or Redis is down.
+
+Redis caching: Stores per-region cache for fast reads. TTL = 10 mins (adjustable).
+
+Kafka cross-region invalidation: Ensures that other regions purge stale cache after updates.
+
+Fallbacks: Each service method has a fallback; can be improved to return stale cache or a custom error.
+
+Scalability:
+
+Redis can be clustered per region.
+
+Kafka can be multi-broker, multi-region for durability.
+
+Cassandra already configured for multi-DC replication.
+
+Improvements:
+
+Add DTOs for API layer instead of exposing entity directly.
+
+Add validation for input.
+
+Add metrics for cache hit/miss to Prometheus.
+
+Integrate Spring Cloud Sleuth + Jaeger for request tracing across regions.
